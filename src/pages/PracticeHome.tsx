@@ -375,12 +375,12 @@ const PracticeHome = () => {
                         setSelectedRole(role.id);
                         handleStartPractice(role.id);
                       }}
-                      className="w-full h-full p-3 flex flex-col items-center gap-2 rounded-lg border-2 border-gray-200 hover:border-mockmate-primary hover:bg-mockmate-light transition-all text-center group"
+                      className="w-full h-full p-3 flex flex-col items-center gap-2 rounded-lg border-2 border-border hover:border-mockmate-primary hover:bg-mockmate-primary/10 transition-all text-center group"
                     >
-                      <div className="w-12 h-12 bg-mockmate-light rounded-full flex items-center justify-center text-mockmate-primary group-hover:bg-white transition-colors">
+                      <div className="w-12 h-12 bg-mockmate-primary/10 dark:bg-mockmate-primary/20 rounded-full flex items-center justify-center text-mockmate-primary group-hover:bg-mockmate-primary/20 dark:group-hover:bg-mockmate-primary/30 transition-colors">
                         {iconMap[role.icon] || <Package className="h-6 w-6" />}
                       </div>
-                      <span className="text-xs font-medium text-gray-700 group-hover:text-mockmate-primary line-clamp-2">
+                      <span className="text-xs font-medium text-foreground/80 group-hover:text-mockmate-primary line-clamp-2">
                         {role.title}
                       </span>
                     </button>
@@ -389,26 +389,26 @@ const PracticeHome = () => {
               </div>
 
               {/* Benefits Info */}
-              <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 rounded-lg border border-blue-200">
+              <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950/40 dark:to-cyan-950/40 rounded-lg border border-blue-200 dark:border-blue-800">
                 <div className="flex items-start gap-2">
-                  <Lightbulb className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <Lightbulb className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
                   <div className="">
-                    <h4 className="text-sm font-semibold text-blue-900 mb-2">Practice Mode Benefits</h4>
-                    <div className="grid grid-cols-2 gap-2 text-xs text-blue-700">
+                    <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-200 mb-2">Practice Mode Benefits</h4>
+                    <div className="grid grid-cols-2 gap-2 text-xs text-blue-700 dark:text-blue-300">
                       <div className="flex items-center gap-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-400"></div>
                         <span>No monitoring</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-400"></div>
                         <span>Unlimited attempts</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-400"></div>
                         <span>Instant feedback</span>
                       </div>
                       <div className="flex items-center gap-1">
-                        <div className="w-1.5 h-1.5 rounded-full bg-blue-600"></div>
+                        <div className="w-1.5 h-1.5 rounded-full bg-blue-600 dark:bg-blue-400"></div>
                         <span>No time limits</span>
                       </div>
                     </div>

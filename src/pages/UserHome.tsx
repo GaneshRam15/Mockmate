@@ -142,16 +142,16 @@ const UserHome = () => {
             </CardHeader>
             <CardContent className="flex flex-col gap-4">
               {/* Practice Mode */}
-              <div className="p-4 border border-green-200 rounded-lg bg-green-50">
+              <div className="p-4 border border-green-200 dark:border-green-800 rounded-lg bg-green-50 dark:bg-green-950/40">
                 <div className="flex items-center gap-2 mb-2">
-                  <Zap className="h-5 w-5 text-green-600" />
-                  <h3 className="font-semibold text-green-800">Practice Mode</h3>
+                  <Zap className="h-5 w-5 text-green-600 dark:text-green-400" />
+                  <h3 className="font-semibold text-green-800 dark:text-green-300">Practice Mode</h3>
                 </div>
-                <p className="text-sm text-green-700 mb-3">
+                <p className="text-sm text-green-700 dark:text-green-400/80 mb-3">
                   Unlimited practice • No monitoring • Instant feedback
                 </p>
                 <Button 
-                  className="w-full bg-green-600 hover:bg-green-700" 
+                  className="w-full bg-green-600 hover:bg-green-700 dark:bg-green-700 dark:hover:bg-green-600" 
                   onClick={() => navigate("/practice")}
                 >
                   <Play className="mr-2 h-4 w-4" />
@@ -160,17 +160,17 @@ const UserHome = () => {
               </div>
               
               {/* Test Mode */}
-              <div className="p-4 border border-blue-200 rounded-lg bg-blue-50">
+              <div className="p-4 border border-blue-200 dark:border-blue-800 rounded-lg bg-blue-50 dark:bg-blue-950/40">
                 <div className="flex items-center gap-2 mb-2">
-                  <Target className="h-5 w-5 text-blue-600" />
-                  <h3 className="font-semibold text-blue-800">Test Mode</h3>
+                  <Target className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <h3 className="font-semibold text-blue-800 dark:text-blue-300">Test Mode</h3>
                 </div>
-                <p className="text-sm text-blue-700 mb-3">
+                <p className="text-sm text-blue-700 dark:text-blue-400/80 mb-3">
                   Formal assessment • Admin monitoring • Official results
                 </p>
                 <Button 
                   variant="outline" 
-                  className="w-full border-blue-300 text-blue-700 hover:bg-blue-100" 
+                  className="w-full border-blue-300 dark:border-blue-700 text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-900/50" 
                   onClick={() => navigate("/home")}
                 >
                   <Target className="mr-2 h-4 w-4" />
@@ -210,7 +210,7 @@ const UserHome = () => {
                     .map((interview) => (
                       <div 
                         key={interview.id} 
-                        className="flex justify-between items-center p-3 border rounded-md hover:bg-slate-50 transition-colors"
+                        className="flex justify-between items-center p-3 border rounded-md hover:bg-muted/50 transition-colors"
                       >
                         <div>
                           <p className="font-medium">{interview.roleName}</p>

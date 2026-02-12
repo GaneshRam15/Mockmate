@@ -129,6 +129,9 @@ export interface RoundOneAptitudeResult {
     };
   };
   completedAt: string;
+  // Proctoring / Abort
+  aborted?: boolean;
+  abortReason?: string;
   // Admin actions
   selectedForRound2?: boolean;
   round2EmailSent?: boolean;

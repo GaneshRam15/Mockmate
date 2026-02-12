@@ -450,21 +450,21 @@ const CodingPractice = () => {
               </p>
 
               <div className="grid grid-cols-3 gap-4 mb-8">
-                <div className="bg-blue-50 p-4 rounded-lg">
-                  <Target className="h-6 w-6 text-blue-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-blue-600">{solvedCount}/{questions.length}</p>
+                <div className="bg-blue-50 dark:bg-blue-950/40 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+                  <Target className="h-6 w-6 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">{solvedCount}/{questions.length}</p>
                   <p className="text-sm text-muted-foreground">Problems Solved</p>
                 </div>
-                <div className="bg-green-50 p-4 rounded-lg">
-                  <Trophy className="h-6 w-6 text-green-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-green-600">
+                <div className="bg-green-50 dark:bg-green-950/40 p-4 rounded-lg border border-green-200 dark:border-green-800">
+                  <Trophy className="h-6 w-6 text-green-600 dark:text-green-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-green-600 dark:text-green-400">
                     {Math.round(submissions.reduce((sum, s) => sum + s.feedback.overallScore, 0) / (submissions.length || 1))}
                   </p>
                   <p className="text-sm text-muted-foreground">Average Score</p>
                 </div>
-                <div className="bg-purple-50 p-4 rounded-lg">
-                  <Clock className="h-6 w-6 text-purple-600 mx-auto mb-2" />
-                  <p className="text-2xl font-bold text-purple-600">
+                <div className="bg-purple-50 dark:bg-purple-950/40 p-4 rounded-lg border border-purple-200 dark:border-purple-800">
+                  <Clock className="h-6 w-6 text-purple-600 dark:text-purple-400 mx-auto mb-2" />
+                  <p className="text-2xl font-bold text-purple-600 dark:text-purple-400">
                     {Math.floor((new Date().getTime() - new Date(sessionStartTime).getTime()) / 1000 / 60)}m
                   </p>
                   <p className="text-sm text-muted-foreground">Time Spent</p>
@@ -504,12 +504,12 @@ const CodingPractice = () => {
   return (
     <Layout>
       {/* HackerRank Style Layout */}
-      <div className="flex h-[calc(100vh-64px)] bg-white">
-        {/* Left Panel - Light Theme Problem Description */}
-        <div className="w-1/2 bg-white border-r border-gray-200 flex flex-col">
+      <div className="flex h-[calc(100vh-64px)] bg-background">
+        {/* Left Panel - Problem Description */}
+        <div className="w-1/2 bg-background border-r border-border flex flex-col">
           {/* Header */}
-          <div className="p-4 border-b border-gray-200 bg-gray-50">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="p-4 border-b border-border bg-muted/50">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span>Prepare</span>
               <span>›</span>
               <span>Algorithms</span>
@@ -522,17 +522,17 @@ const CodingPractice = () => {
           <div className="flex-1 overflow-y-auto p-6">
             <div className="space-y-6">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-3">
+                <h1 className="text-2xl font-bold text-foreground mb-3">
                   {currentQuestion.title}
                 </h1>
                 <div className="flex gap-2 mb-4">
                   <Badge 
                     className={
                       currentQuestion.difficulty === 'easy' 
-                        ? 'bg-green-100 text-green-700 border-0' 
+                        ? 'bg-green-100 dark:bg-green-900/50 text-green-700 dark:text-green-300 border-0' 
                         : currentQuestion.difficulty === 'medium'
-                        ? 'bg-yellow-100 text-yellow-700 border-0'
-                        : 'bg-red-100 text-red-700 border-0'
+                        ? 'bg-yellow-100 dark:bg-yellow-900/50 text-yellow-700 dark:text-yellow-300 border-0'
+                        : 'bg-red-100 dark:bg-red-900/50 text-red-700 dark:text-red-300 border-0'
                     }
                   >
                     {currentQuestion.difficulty.toUpperCase()}
@@ -540,8 +540,8 @@ const CodingPractice = () => {
                 </div>
               </div>
 
-              <div className="prose prose-gray max-w-none">
-                <div className="text-gray-700 leading-relaxed whitespace-pre-wrap">
+              <div className="prose prose-gray dark:prose-invert max-w-none">
+                <div className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
                   {currentQuestion.description}
                 </div>
               </div>
@@ -549,26 +549,26 @@ const CodingPractice = () => {
               {/* Example */}
               {currentQuestion.examples.length > 0 && (
                 <div className="space-y-4">
-                  <h3 className="text-lg font-semibold text-gray-900">Example</h3>
+                  <h3 className="text-lg font-semibold text-foreground">Example</h3>
                   {currentQuestion.examples.map((example, index) => (
-                    <div key={index} className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <div key={index} className="bg-muted/50 rounded-lg p-4 border border-border">
                       <div className="space-y-3 text-sm">
                         <div>
-                          <span className="font-medium text-gray-900">Input:</span>
-                          <div className="bg-white p-3 rounded mt-2 text-gray-800 border border-gray-300 font-mono">
+                          <span className="font-medium text-foreground">Input:</span>
+                          <div className="bg-background p-3 rounded mt-2 text-foreground border border-border font-mono">
                             {example.input}
                           </div>
                         </div>
                         <div>
-                          <span className="font-medium text-gray-900">Output:</span>
-                          <div className="bg-white p-3 rounded mt-2 text-gray-800 border border-gray-300 font-mono">
+                          <span className="font-medium text-foreground">Output:</span>
+                          <div className="bg-background p-3 rounded mt-2 text-foreground border border-border font-mono">
                             {example.output}
                           </div>
                         </div>
                         {example.explanation && (
                           <div>
-                            <span className="font-medium text-gray-900">Explanation:</span>
-                            <div className="text-gray-700 mt-2">
+                            <span className="font-medium text-foreground">Explanation:</span>
+                            <div className="text-muted-foreground mt-2">
                               {example.explanation}
                             </div>
                           </div>
@@ -581,9 +581,9 @@ const CodingPractice = () => {
 
               {/* Input Format */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Input Format</h3>
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <div className="text-gray-700 text-sm">
+                <h3 className="text-lg font-semibold text-foreground mb-3">Input Format</h3>
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <div className="text-muted-foreground text-sm">
                     {currentQuestion.inputFormat}
                   </div>
                 </div>
@@ -591,9 +591,9 @@ const CodingPractice = () => {
 
               {/* Constraints */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Constraints</h3>
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <div className="text-gray-700 text-sm space-y-1">
+                <h3 className="text-lg font-semibold text-foreground mb-3">Constraints</h3>
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <div className="text-muted-foreground text-sm space-y-1">
                     {currentQuestion.constraints.map((constraint, index) => (
                       <div key={index} className="font-mono">• {constraint}</div>
                     ))}
@@ -603,9 +603,9 @@ const CodingPractice = () => {
 
               {/* Output Format */}
               <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-3">Output Format</h3>
-                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <div className="text-gray-700 text-sm">
+                <h3 className="text-lg font-semibold text-foreground mb-3">Output Format</h3>
+                <div className="bg-muted/50 rounded-lg p-4 border border-border">
+                  <div className="text-muted-foreground text-sm">
                     {currentQuestion.outputFormat}
                   </div>
                 </div>
@@ -615,7 +615,7 @@ const CodingPractice = () => {
         </div>
 
         {/* Right Panel - Code Editor & Results */}
-        <div className="w-1/2 bg-white flex flex-col">
+        <div className="w-1/2 bg-background flex flex-col">
           {/* Code Editor - Takes most of the space */}
           <div className="flex-1 min-h-0">
             <CodeEditor
@@ -632,14 +632,14 @@ const CodingPractice = () => {
           </div>
 
           {/* Results Panel */}
-          <div className="h-64 border-t border-gray-200 bg-gray-900">
+          <div className="h-64 border-t border-border bg-gray-900 dark:bg-gray-950">
             <TestCaseResults result={executionResult} isRunning={isRunning} />
           </div>
         </div>
       </div>
 
       {/* Navigation Footer */}
-      <div className="bg-white border-t border-gray-200 px-6 py-3">
+      <div className="bg-background border-t border-border px-6 py-3">
         <div className="flex items-center justify-between">
           <Button
             onClick={handlePreviousQuestion}
@@ -653,7 +653,7 @@ const CodingPractice = () => {
           </Button>
 
           <div className="flex items-center gap-3">
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-muted-foreground">
               Problem {currentQuestionIndex + 1} of {questions.length}
             </span>
           </div>

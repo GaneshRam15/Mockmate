@@ -302,7 +302,7 @@ const AdminDashboard = () => {
   // Handle selecting candidate for Round 2
   const handleSelectForRound2 = async (resultId: string, result: RoundOneAptitudeResult) => {
     const confirmed = window.confirm(
-      `Select ${result.userEmail} for Round 2 (Mock Interview) for ${result.roleName}?\\n\\nThis will send an email notification to the candidate.`
+      `Select ${result.userEmail} for Round 2 (Mock Interview) for ${result.roleName}?\n\nThis will send an email notification to the candidate.`
     );
     
     if (!confirmed) return;
@@ -349,11 +349,7 @@ const AdminDashboard = () => {
       // Check if EmailJS is configured
       if (!isEmailConfigured()) {
         console.warn('⚠️ EmailJS is not configured. Check emailService.ts for setup instructions.');
-        toast({
-          title: "Email Configuration Required",
-          description: "EmailJS credentials are not configured. Check console for setup instructions.",
-          variant: "default",
-        });
+        toast.warning("Email Configuration Required: EmailJS credentials are not configured. Check console for setup instructions.");
         
         // Show preview of what would be sent
         const emailPreview = `
@@ -391,27 +387,16 @@ The MockMate Team
       
       if (emailResult.success) {
         console.log('✅ Email sent successfully to:', result.userEmail);
-        toast({
-          title: "Email Sent Successfully",
-          description: `Round 2 invitation email sent to ${result.userEmail}`,
-        });
+        toast.success(`Email Sent Successfully — Round 2 invitation sent to ${result.userEmail}`);
         return true;
       } else {
         console.error('❌ Failed to send email:', emailResult.error);
-        toast({
-          title: "Email Sending Failed",
-          description: emailResult.error || "Failed to send email. Candidate still selected.",
-          variant: "destructive",
-        });
+        toast.error(`Email Sending Failed: ${emailResult.error || "Failed to send email. Candidate still selected."}`);
         return false;
       }
     } catch (error) {
       console.error('Error sending Round 2 email:', error);
-      toast({
-        title: "Email Error",
-        description: "An error occurred while sending the email.",
-        variant: "destructive",
-      });
+      toast.error("Email Error: An error occurred while sending the email.");
       return false;
     }
   };
@@ -602,7 +587,7 @@ The MockMate Team
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {rolesWithStatus.map((role) => (
-                <Card key={role.id} className={`border-2 ${role.isOpen ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
+                <Card key={role.id} className={`border-2 ${role.isOpen ? 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950/30' : 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-950/30'}`}>
                   <CardContent className="p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
@@ -718,6 +703,7 @@ The MockMate Team
                           <TableHead>Correct/Total</TableHead>
                           <TableHead>Date</TableHead>
                           <TableHead>Status</TableHead>
+                          <TableHead>Proctoring</TableHead>
                           <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                       </TableHeader>
@@ -759,6 +745,11 @@ The MockMate Team
                                     <CheckCircle className="h-3 w-3" />
                                     Selected for R2
                                   </Badge>
+                                ) : result.aborted ? (
+                                  <Badge className="bg-red-100 text-red-800 flex items-center gap-1 w-fit">
+                                    <Ban className="h-3 w-3" />
+                                    Aborted
+                                  </Badge>
                                 ) : (
                                   <Badge variant="outline" className="flex items-center gap-1 w-fit">
                                     <Clock className="h-3 w-3" />
@@ -766,8 +757,19 @@ The MockMate Team
                                   </Badge>
                                 )}
                               </TableCell>
+                              <TableCell>
+                                {result.aborted ? (
+                                  <span className="text-xs text-red-600" title={result.abortReason}>
+                                    {result.abortReason ? (result.abortReason.length > 30 ? result.abortReason.substring(0, 30) + '...' : result.abortReason) : 'Violated'}
+                                  </span>
+                                ) : (
+                                  <Badge variant="outline" className="bg-green-50 text-green-700 text-xs">
+                                    Clean
+                                  </Badge>
+                                )}
+                              </TableCell>
                               <TableCell className="text-right">
-                                {!result.selectedForRound2 && result.score >= 50 && (
+                                {!result.selectedForRound2 && !result.aborted && result.score >= 50 && (
                                   <Button
                                     size="sm"
                                     onClick={() => handleSelectForRound2(result.id, result)}
@@ -787,10 +789,16 @@ The MockMate Team
                                     )}
                                   </Button>
                                 )}
-                                {!result.selectedForRound2 && result.score < 50 && (
+                                {!result.selectedForRound2 && !result.aborted && result.score < 50 && (
                                   <Badge variant="secondary" className="flex items-center gap-1">
                                     <XCircle className="h-3 w-3" />
                                     Below threshold
+                                  </Badge>
+                                )}
+                                {result.aborted && !result.selectedForRound2 && (
+                                  <Badge variant="destructive" className="flex items-center gap-1">
+                                    <Ban className="h-3 w-3" />
+                                    Disqualified
                                   </Badge>
                                 )}
                                 {result.selectedForRound2 && result.round2EmailSent && (

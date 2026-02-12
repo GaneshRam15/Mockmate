@@ -277,8 +277,15 @@ const History = () => {
                               Selected for Round 2!
                             </Badge>
                           )}
+
+                          {result.aborted && (
+                            <Badge className="bg-red-100 text-red-800 flex items-center gap-1">
+                              <Ban className="h-3 w-3" />
+                              Aborted
+                            </Badge>
+                          )}
                           
-                          {!result.selectedForRound2 && result.score >= 50 && (
+                          {!result.selectedForRound2 && !result.aborted && result.score >= 50 && (
                             <Badge className="bg-amber-100 text-amber-800 flex items-center gap-1">
                               <Clock className="h-3 w-3" />
                               Under Review
@@ -311,6 +318,16 @@ const History = () => {
                       </CardDescription>
                     </CardHeader>
                     <CardContent>
+                      {result.aborted && (
+                        <Alert className="mb-4 bg-red-50 border-red-200">
+                          <Ban className="h-4 w-4 text-red-600" />
+                          <AlertTitle className="text-red-800">Test Aborted</AlertTitle>
+                          <AlertDescription className="text-red-700">
+                            {result.abortReason || 'Your aptitude test was aborted due to a proctoring violation.'}
+                          </AlertDescription>
+                        </Alert>
+                      )}
+
                       {result.selectedForRound2 && (
                         <Alert className="mb-4 bg-green-50 border-green-200">
                           <CheckCircle className="h-4 w-4 text-green-600" />

@@ -102,12 +102,12 @@ export const CodeEditor = ({
   };
 
   return (
-    <Card className="h-full flex flex-col shadow-sm">
-      <CardHeader className="pb-3 border-b bg-gray-50/50">
+    <Card className="h-full flex flex-col shadow-sm dark:border-gray-700">
+      <CardHeader className="pb-3 border-b bg-gray-50/50 dark:bg-gray-900/60 dark:border-gray-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="bg-blue-100 p-1.5 rounded">
-              <Code2 className="h-4 w-4 text-blue-600" />
+            <div className="bg-blue-100 dark:bg-blue-900/50 p-1.5 rounded">
+              <Code2 className="h-4 w-4 text-blue-600 dark:text-blue-400" />
             </div>
             <div>
               <CardTitle className="text-base font-semibold">Code Editor</CardTitle>
@@ -158,7 +158,7 @@ export const CodeEditor = ({
       
       <CardContent className="flex-1 flex flex-col p-0">
         {/* Editor */}
-        <div className="flex-1 border-b">
+        <div className="flex-1 border-b dark:border-gray-700">
           <Editor
             height="100%"
             language={langConfig.monacoId}
@@ -198,7 +198,7 @@ export const CodeEditor = ({
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-between px-4 py-3 bg-gray-50 border-t">
+        <div className="flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-gray-900/60 border-t dark:border-gray-700">
           <div className="flex items-center gap-2">
             <Button
               onClick={handleCopy}
@@ -224,7 +224,7 @@ export const CodeEditor = ({
               onClick={onReset}
               variant="ghost"
               size="sm"
-              className="gap-1.5 h-8 text-xs text-orange-600 hover:text-orange-700 hover:bg-orange-50"
+              className="gap-1.5 h-8 text-xs text-orange-600 hover:text-orange-700 hover:bg-orange-50 dark:text-orange-400 dark:hover:text-orange-300 dark:hover:bg-orange-950/50"
             >
               <RotateCcw className="h-3.5 w-3.5" />
               Reset

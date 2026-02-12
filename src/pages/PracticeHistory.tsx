@@ -79,9 +79,9 @@ const PracticeHistory = () => {
   };
 
   const getScoreColor = (percentage: number) => {
-    if (percentage >= 70) return 'text-green-600 bg-green-50';
-    if (percentage >= 50) return 'text-yellow-600 bg-yellow-50';
-    return 'text-red-600 bg-red-50';
+    if (percentage >= 70) return 'text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-950/50';
+    if (percentage >= 50) return 'text-yellow-600 bg-yellow-50 dark:text-yellow-400 dark:bg-yellow-950/50';
+    return 'text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-950/50';
   };
 
   if (loading) {
@@ -127,7 +127,7 @@ const PracticeHistory = () => {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <Brain className="h-8 w-8 text-purple-600" />
+                    <Brain className="h-8 w-8 text-purple-600 dark:text-purple-400" />
                   <div>
                     <div className="text-2xl font-bold">{aptitudeHistory.length}</div>
                     <div className="text-sm text-muted-foreground">Aptitude Tests</div>
@@ -138,7 +138,7 @@ const PracticeHistory = () => {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <MessageSquare className="h-8 w-8 text-blue-600" />
+                    <MessageSquare className="h-8 w-8 text-blue-600 dark:text-blue-400" />
                   <div>
                     <div className="text-2xl font-bold">{interviewHistory.length}</div>
                     <div className="text-sm text-muted-foreground">Interview Sessions</div>
@@ -149,7 +149,7 @@ const PracticeHistory = () => {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <Bot className="h-8 w-8 text-indigo-600" />
+                    <Bot className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
                   <div>
                     <div className="text-2xl font-bold">{botInterviewHistory.length}</div>
                     <div className="text-sm text-muted-foreground">AI Bot Interviews</div>
@@ -160,7 +160,7 @@ const PracticeHistory = () => {
             <Card>
               <CardContent className="pt-6">
                 <div className="flex items-center gap-4">
-                  <Target className="h-8 w-8 text-green-600" />
+                    <Target className="h-8 w-8 text-green-600 dark:text-green-400" />
                   <div>
                     <div className="text-2xl font-bold">
                       {botInterviewHistory.length > 0 
@@ -219,7 +219,7 @@ const PracticeHistory = () => {
                         <div className="flex items-start justify-between">
                           <div>
                             <CardTitle className="flex items-center gap-2">
-                              <Brain className="h-5 w-5 text-purple-600" />
+                              <Brain className="h-5 w-5 text-purple-600 dark:text-purple-400" />
                               Aptitude Practice Session
                             </CardTitle>
                             <CardDescription className="flex items-center gap-2 mt-1">
@@ -247,11 +247,11 @@ const PracticeHistory = () => {
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-muted-foreground">Correct Answers:</span>
-                                <span className="font-medium text-green-600">{result.correctAnswers}</span>
+                                <span className="font-medium text-green-600 dark:text-green-400">{result.correctAnswers}</span>
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-muted-foreground">Incorrect Answers:</span>
-                                <span className="font-medium text-red-600">
+                                <span className="font-medium text-red-600 dark:text-red-400">
                                   {result.totalQuestions - result.correctAnswers}
                                 </span>
                               </div>
@@ -271,7 +271,7 @@ const PracticeHistory = () => {
                                     <span className="capitalize">{category.replace('-', ' ')}</span>
                                     <span className="font-medium">{stats.percentage}%</span>
                                   </div>
-                                  <div className="w-full bg-gray-200 rounded-full h-1.5">
+                                  <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
                                     <div
                                       className={`h-1.5 rounded-full ${
                                         stats.percentage >= 70 
@@ -291,15 +291,15 @@ const PracticeHistory = () => {
 
                         {/* Recommendations */}
                         {result.recommendations.length > 0 && (
-                          <div className="mt-6 pt-6 border-t">
+                          <div className="mt-6 pt-6 border-t border-border">
                             <h4 className="font-semibold mb-3 flex items-center gap-2">
-                              <Youtube className="h-4 w-4 text-red-600" />
+                              <Youtube className="h-4 w-4 text-red-600 dark:text-red-400" />
                               Recommended Learning Resources
                             </h4>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                               {result.recommendations.slice(0, 4).map((rec, idx) => (
-                                <div key={idx} className="bg-gray-50 rounded-lg p-3">
-                                  <div className="font-medium text-sm mb-2 capitalize">
+                                <div key={idx} className="bg-gray-50 dark:bg-gray-800/60 rounded-lg p-3 border border-gray-100 dark:border-gray-700">
+                                  <div className="font-medium text-sm mb-2 capitalize text-foreground">
                                     {rec.topic.replace('-', ' ')}
                                   </div>
                                   <div className="space-y-1">
@@ -309,7 +309,7 @@ const PracticeHistory = () => {
                                         href={getYouTubeSearchUrl(video.searchQuery)}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="flex items-center gap-2 text-xs text-blue-600 hover:text-blue-800 hover:underline"
+                                        className="flex items-center gap-2 text-xs text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 hover:underline"
                                       >
                                         <ExternalLink className="h-3 w-3" />
                                         {video.title} - {video.channel}
@@ -356,7 +356,7 @@ const PracticeHistory = () => {
                         <div className="flex items-start justify-between">
                           <div>
                             <CardTitle className="flex items-center gap-2">
-                              <MessageSquare className="h-5 w-5 text-blue-600" />
+                              <MessageSquare className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                               {result.roleName}
                             </CardTitle>
                             <CardDescription className="flex items-center gap-2 mt-1">
@@ -404,7 +404,7 @@ const PracticeHistory = () => {
                             <div className="space-y-3 text-sm">
                               {result.strengths.length > 0 && (
                                 <div>
-                                  <div className="text-green-600 font-medium mb-1">Strengths:</div>
+                                  <div className="text-green-600 dark:text-green-400 font-medium mb-1">Strengths:</div>
                                   <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                                     {result.strengths.slice(0, 2).map((strength, idx) => (
                                       <li key={idx}>{strength}</li>
@@ -414,7 +414,7 @@ const PracticeHistory = () => {
                               )}
                               {result.improvements.length > 0 && (
                                 <div>
-                                  <div className="text-orange-600 font-medium mb-1">Areas to Improve:</div>
+                                  <div className="text-orange-600 dark:text-orange-400 font-medium mb-1">Areas to Improve:</div>
                                   <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                                     {result.improvements.slice(0, 2).map((improvement, idx) => (
                                       <li key={idx}>{improvement}</li>
@@ -428,7 +428,7 @@ const PracticeHistory = () => {
 
                         {/* Recommendations */}
                         {result.recommendations.length > 0 && (
-                          <div className="mt-6 pt-6 border-t">
+                          <div className="mt-6 pt-6 border-t border-border">
                             <h4 className="font-semibold mb-3 flex items-center gap-2">
                               <BookOpen className="h-4 w-4" />
                               Recommendations
@@ -478,7 +478,7 @@ const PracticeHistory = () => {
                         <div className="flex items-start justify-between">
                           <div>
                             <CardTitle className="flex items-center gap-2">
-                              <Bot className="h-5 w-5 text-indigo-600" />
+                              <Bot className="h-5 w-5 text-indigo-600 dark:text-indigo-400" />
                               STEVEN Interview - {result.role}
                             </CardTitle>
                             <CardDescription className="flex items-center gap-2 mt-1">
@@ -532,7 +532,7 @@ const PracticeHistory = () => {
                             <div className="space-y-3 text-sm">
                               {result.feedback.strengths.length > 0 && (
                                 <div>
-                                  <div className="text-green-600 font-medium mb-1">✓ Strengths:</div>
+                                  <div className="text-green-600 dark:text-green-400 font-medium mb-1">✓ Strengths:</div>
                                   <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                                     {result.feedback.strengths.slice(0, 2).map((strength, idx) => (
                                       <li key={idx}>{strength}</li>
@@ -542,7 +542,7 @@ const PracticeHistory = () => {
                               )}
                               {result.feedback.improvements.length > 0 && (
                                 <div>
-                                  <div className="text-orange-600 font-medium mb-1">→ Improvements:</div>
+                                  <div className="text-orange-600 dark:text-orange-400 font-medium mb-1">→ Improvements:</div>
                                   <ul className="list-disc list-inside space-y-1 text-muted-foreground">
                                     {result.feedback.improvements.slice(0, 2).map((improvement, idx) => (
                                       <li key={idx}>{improvement}</li>
@@ -556,7 +556,7 @@ const PracticeHistory = () => {
 
                         {/* Detailed Feedback */}
                         {result.feedback.detailedFeedback && (
-                          <div className="mt-6 pt-6 border-t">
+                          <div className="mt-6 pt-6 border-t border-border">
                             <h4 className="font-semibold mb-3 flex items-center gap-2">
                               <Bot className="h-4 w-4" />
                               STEVEN's Detailed Feedback
@@ -568,7 +568,7 @@ const PracticeHistory = () => {
                         )}
 
                         {/* View Transcript Button */}
-                        <div className="mt-6 pt-6 border-t flex gap-3">
+                        <div className="mt-6 pt-6 border-t border-border flex gap-3">
                           <Button 
                             variant="outline" 
                             size="sm"

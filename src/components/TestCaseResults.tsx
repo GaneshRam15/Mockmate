@@ -21,11 +21,11 @@ interface TestCaseResultsProps {
 export const TestCaseResults = ({ result, isRunning }: TestCaseResultsProps) => {
   if (isRunning) {
     return (
-      <div className="h-full bg-gray-900 flex items-center justify-center">
+      <div className="h-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-500 mx-auto mb-3"></div>
-          <p className="text-white font-medium text-sm mb-1">Compiling and running...</p>
-          <p className="text-gray-400 text-xs">Please wait</p>
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 dark:border-gray-500 mx-auto mb-3"></div>
+          <p className="text-foreground font-medium text-sm mb-1">Compiling and running...</p>
+          <p className="text-muted-foreground text-xs">Please wait</p>
         </div>
       </div>
     );
@@ -33,14 +33,14 @@ export const TestCaseResults = ({ result, isRunning }: TestCaseResultsProps) => 
 
   if (!result) {
     return (
-      <div className="h-full bg-gray-900 flex items-center justify-center">
+      <div className="h-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="bg-gray-700 p-3 rounded-full w-fit mx-auto mb-3">
-            <Zap className="h-6 w-6 text-gray-400" />
+          <div className="bg-gray-200 dark:bg-gray-700 p-3 rounded-full w-fit mx-auto mb-3">
+            <Zap className="h-6 w-6 text-gray-500 dark:text-gray-400" />
           </div>
-          <p className="text-white font-medium text-sm mb-1">No output yet</p>
-          <p className="text-gray-400 text-xs">
-            Click <span className="text-white font-medium">"Run Code"</span> to test your solution
+          <p className="text-foreground font-medium text-sm mb-1">No output yet</p>
+          <p className="text-muted-foreground text-xs">
+            Click <span className="text-foreground font-medium">"Run Code"</span> to test your solution
           </p>
         </div>
       </div>
@@ -52,15 +52,15 @@ export const TestCaseResults = ({ result, isRunning }: TestCaseResultsProps) => 
   const totalCount = testResults.length;
 
   return (
-    <div className="h-full bg-gray-900 flex flex-col">
+    <div className="h-full bg-gray-100 dark:bg-gray-900 flex flex-col">
       {/* Header with Status */}
-      <div className="p-4 border-b border-gray-700">
+      <div className="p-4 border-b border-gray-200 dark:border-gray-700">
         {success ? (
           <div className="text-left">
             <h3 className="text-green-400 text-lg font-semibold mb-1">
               ✓ Success
             </h3>
-            <p className="text-gray-300 text-sm">
+            <p className="text-muted-foreground text-sm">
               All test cases passed
             </p>
           </div>
@@ -69,7 +69,7 @@ export const TestCaseResults = ({ result, isRunning }: TestCaseResultsProps) => 
             <h3 className="text-red-400 text-lg font-semibold mb-1">
               Compilation Error
             </h3>
-            <p className="text-gray-300 text-sm">
+            <p className="text-muted-foreground text-sm">
               Please fix the errors and try again
             </p>
           </div>
@@ -78,7 +78,7 @@ export const TestCaseResults = ({ result, isRunning }: TestCaseResultsProps) => 
             <h3 className="text-red-400 text-lg font-semibold mb-1">
               Wrong Answer :(
             </h3>
-            <p className="text-gray-300 text-sm">
+            <p className="text-muted-foreground text-sm">
               {passedCount}/{totalCount} test cases failed
             </p>
           </div>
@@ -90,10 +90,10 @@ export const TestCaseResults = ({ result, isRunning }: TestCaseResultsProps) => 
         {error ? (
           /* Compilation Error */
           <div className="p-4">
-            <div className="bg-gray-800 rounded p-4 border border-gray-700">
+            <div className="bg-gray-200 dark:bg-gray-800 rounded p-4 border border-gray-300 dark:border-gray-700">
               <h4 className="text-red-400 font-semibold mb-2">Compiler Message</h4>
-              <div className="bg-gray-900 rounded p-3 border border-gray-600">
-                <pre className="text-gray-300 text-sm font-mono whitespace-pre-wrap overflow-x-auto">
+              <div className="bg-gray-100 dark:bg-gray-900 rounded p-3 border border-gray-300 dark:border-gray-600">
+                <pre className="text-foreground text-sm font-mono whitespace-pre-wrap overflow-x-auto">
                   {error}
                 </pre>
               </div>
@@ -103,7 +103,7 @@ export const TestCaseResults = ({ result, isRunning }: TestCaseResultsProps) => 
           /* Test Cases */
           <div className="flex h-full">
             {/* Left: Test Case Tabs */}
-            <div className="w-64 border-r border-gray-700 overflow-y-auto bg-gray-800">
+            <div className="w-64 border-r border-gray-200 dark:border-gray-700 overflow-y-auto bg-gray-200 dark:bg-gray-800">
               <div className="p-3">
                 {testResults.map((test, index) => (
                   <div
@@ -141,9 +141,9 @@ export const TestCaseResults = ({ result, isRunning }: TestCaseResultsProps) => 
                         <div className="grid grid-cols-2 gap-4">
                           {/* Input */}
                           <div>
-                            <h4 className="text-gray-400 text-sm font-semibold mb-2">Input (stdin)</h4>
-                            <div className="bg-gray-800 rounded p-3 border border-gray-600 min-h-24">
-                              <pre className="text-gray-300 text-sm font-mono whitespace-pre-wrap">
+                            <h4 className="text-muted-foreground text-sm font-semibold mb-2">Input (stdin)</h4>
+                            <div className="bg-gray-200 dark:bg-gray-800 rounded p-3 border border-gray-300 dark:border-gray-600 min-h-24">
+                              <pre className="text-foreground text-sm font-mono whitespace-pre-wrap">
                                 {firstFailed.input}
                               </pre>
                             </div>
@@ -151,9 +151,9 @@ export const TestCaseResults = ({ result, isRunning }: TestCaseResultsProps) => 
 
                           {/* Your Output */}
                           <div>
-                            <h4 className="text-gray-400 text-sm font-semibold mb-2">Your Output (stdout)</h4>
-                            <div className="bg-gray-800 rounded p-3 border border-gray-600 min-h-24">
-                              <pre className="text-gray-300 text-sm font-mono whitespace-pre-wrap">
+                            <h4 className="text-muted-foreground text-sm font-semibold mb-2">Your Output (stdout)</h4>
+                            <div className="bg-gray-200 dark:bg-gray-800 rounded p-3 border border-gray-300 dark:border-gray-600 min-h-24">
+                              <pre className="text-foreground text-sm font-mono whitespace-pre-wrap">
                                 {firstFailed.actualOutput || 'No output'}
                               </pre>
                             </div>
@@ -161,9 +161,9 @@ export const TestCaseResults = ({ result, isRunning }: TestCaseResultsProps) => 
 
                           {/* Expected Output */}
                           <div className="col-span-2">
-                            <h4 className="text-gray-400 text-sm font-semibold mb-2">Expected Output</h4>
-                            <div className="bg-gray-800 rounded p-3 border border-gray-600">
-                              <pre className="text-gray-300 text-sm font-mono whitespace-pre-wrap">
+                            <h4 className="text-muted-foreground text-sm font-semibold mb-2">Expected Output</h4>
+                            <div className="bg-gray-200 dark:bg-gray-800 rounded p-3 border border-gray-300 dark:border-gray-600">
+                              <pre className="text-foreground text-sm font-mono whitespace-pre-wrap">
                                 {firstFailed.expectedOutput}
                               </pre>
                             </div>
@@ -185,8 +185,8 @@ export const TestCaseResults = ({ result, isRunning }: TestCaseResultsProps) => 
               {success && (
                 <div className="text-center py-8">
                   <CheckCircle2 className="h-16 w-16 text-green-400 mx-auto mb-4" />
-                  <p className="text-white text-lg font-semibold mb-2">All test cases passed!</p>
-                  <div className="text-gray-400 text-sm">
+                  <p className="text-foreground text-lg font-semibold mb-2">All test cases passed!</p>
+                  <div className="text-muted-foreground text-sm">
                     <p>Execution time: {formatExecutionTime(executionTime)}</p>
                     <p>Memory used: {memoryUsed}</p>
                   </div>

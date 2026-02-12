@@ -367,6 +367,7 @@ function BotInterviewContent() {
   }
 
   // Active interview - 3-column layout
+
   return (
     <div className="h-screen bg-gray-950 flex flex-col overflow-hidden">
       {/* Error Display */}
@@ -403,7 +404,7 @@ function BotInterviewContent() {
         <div className="col-span-7 flex flex-col gap-4 overflow-hidden">
           {/* Upper Half - Webcam */}
           <div className="flex-1 min-h-0">
-            <WebcamPanel />
+            <WebcamPanel proctoring={false} />
           </div>
 
           {/* Bottom Half - Transcription */}

@@ -1,8 +1,9 @@
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Layout from "@/components/Layout";
 import WebcamPanel from "@/components/WebcamPanel";
+import ProctoringBanner from "@/components/ProctoringBanner";
 import { useInterview } from "@/contexts/InterviewContext";
 import InterviewProgress from "@/components/InterviewProgress";
 import QuestionDisplay from "@/components/QuestionDisplay";
@@ -16,6 +17,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Clock, CheckCircle, Maximize, Minimize, Video } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import type { FaceViolation } from "@/hooks/useFaceDetection";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -45,8 +47,11 @@ const Interview = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showAbortDialog, setShowAbortDialog] = useState(false);
+  const [abortReason, setAbortReason] = useState<string>('');
   const [showRules, setShowRules] = useState(true);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [bannerViolation, setBannerViolation] = useState<FaceViolation | null>(null);
+  const [bannerStrikeCount, setBannerStrikeCount] = useState(0);
   
   // Track if the interview is active
   const interviewActive = useRef(true);
@@ -130,17 +135,50 @@ const Interview = () => {
   // Handle interview abort
   const handleAbortInterview = () => {
     if (currentInterview) {
-      abortInterview(currentInterview.id, "User switched tabs, split-screen, or exited interview");
+      abortInterview(currentInterview.id, abortReason || "User switched tabs, split-screen, or exited interview");
       setShowAbortDialog(false);
       navigate("/home");
       
       toast({
         title: "Interview Aborted",
-        description: "Your interview was aborted due to external tab/split-screen usage.",
+        description: abortReason || "Your interview was aborted due to external tab/split-screen usage.",
         variant: "destructive",
       });
     }
   };
+
+  // Handle face proctoring — 1st strike = warning toast + banner
+  const handleFaceWarning = useCallback((violation: FaceViolation) => {
+    setBannerStrikeCount(1);
+    setBannerViolation(violation);
+    const desc =
+      violation.type === 'multiple_faces'
+        ? 'Multiple faces detected in your camera. Next violation will abort the interview!'
+        : violation.type === 'prohibited_object'
+        ? 'Prohibited object (phone/book) detected! Remove it immediately. Next violation will abort!'
+        : 'No face detected for too long. Please stay in frame. Next violation will abort!';
+    toast({
+      title: "⚠️ Proctoring Warning (Strike 1/2)",
+      description: desc,
+      variant: "destructive",
+    });
+  }, [toast]);
+
+  // Handle face proctoring — 2nd strike = abort + banner
+  const handleFaceViolation = useCallback((violation: FaceViolation) => {
+    if (!interviewActive.current) return;
+    interviewActive.current = false;
+    setBannerStrikeCount(2);
+    setBannerViolation(violation);
+    const reason =
+      violation.type === 'multiple_faces'
+        ? 'Strike 2: Another person detected in frame again. Interview aborted.'
+        : violation.type === 'prohibited_object'
+        ? 'Strike 2: Prohibited object detected again. Interview aborted.'
+        : 'Strike 2: Face not detected for too long again. Interview aborted.';
+    setAbortReason(reason);
+    setShowAbortDialog(true);
+  }, []);
   
   // Handle timer timeout
   const handleTimeout = async () => {
@@ -270,9 +308,12 @@ const Interview = () => {
             Interview Monitoring
           </div>
           <div className="h-40">
-            <WebcamPanel />
+            <WebcamPanel onViolation={handleFaceViolation} onWarning={handleFaceWarning} />
           </div>
         </div>
+
+        {/* Proctoring banner — full-width alert for violations */}
+        <ProctoringBanner violation={bannerViolation} strikeCount={bannerStrikeCount} />
 
         <div className="flex flex-wrap items-center justify-between gap-4 mb-8">
           <div>
@@ -356,8 +397,7 @@ const Interview = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>Interview Aborted</AlertDialogTitle>
             <AlertDialogDescription>
-              Your interview has been aborted because you switched tabs, used split-screen, or exited the interview.
-              Please start again without switching tabs or windows during the interview.
+              {abortReason || 'Your interview has been aborted because you switched tabs, used split-screen, or exited the interview. Please start again without switching tabs or windows during the interview.'}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

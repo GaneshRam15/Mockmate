@@ -1,7 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import WebcamPanel from '@/components/WebcamPanel';
+import ProctoringBanner from '@/components/ProctoringBanner';
+import InterviewRules from '@/components/InterviewRules';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
@@ -9,9 +11,19 @@ import { saveRound1AptitudeResult } from '@/lib/firebaseService';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { getBalancedQuestionSet, MCQQuestion } from '@/data/aptitudeQuestions';
-import { Brain, Clock, AlertCircle, CheckCircle, Home, ArrowRight, Send, Video } from 'lucide-react';
+import { Brain, Clock, AlertCircle, CheckCircle, Home, ArrowRight, Send, Video, Maximize, Minimize } from 'lucide-react';
+import type { FaceViolation } from '@/hooks/useFaceDetection';
 import { motion } from 'framer-motion';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
 
 const Round1Aptitude = () => {
   const navigate = useNavigate();
@@ -23,6 +35,13 @@ const Round1Aptitude = () => {
   const [userAnswers, setUserAnswers] = useState<(number | null)[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [showRules, setShowRules] = useState(true);
+  const [showAbortDialog, setShowAbortDialog] = useState(false);
+  const [abortReason, setAbortReason] = useState<string>('');
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [bannerViolation, setBannerViolation] = useState<FaceViolation | null>(null);
+  const [bannerStrikeCount, setBannerStrikeCount] = useState(0);
+  const testActive = useRef(true);
 
   // Get role info from location state
   const roleId = location.state?.roleId;
@@ -44,6 +63,187 @@ const Round1Aptitude = () => {
     setQuestions(randomQuestions);
     setUserAnswers(new Array(25).fill(null));
   }, [roleId, roleName, navigate, toast]);
+
+  // ==================== PROCTORING: Tab-switch, blur, resize, beforeunload ====================
+  useEffect(() => {
+    if (showRules || showResults) return;
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden' && testActive.current && !showResults) {
+        testActive.current = false;
+        setShowAbortDialog(true);
+      }
+    };
+
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (!showResults) {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      }
+    };
+
+    const handleFocusChange = () => {
+      if (!document.hasFocus() && testActive.current && !showResults) {
+        testActive.current = false;
+        setShowAbortDialog(true);
+      }
+    };
+
+    let lastWidth = window.innerWidth;
+    let lastHeight = window.innerHeight;
+
+    const handleResize = () => {
+      const widthChange = Math.abs(window.innerWidth - lastWidth);
+      const heightChange = Math.abs(window.innerHeight - lastHeight);
+
+      if ((widthChange > 200 || heightChange > 200) && testActive.current && !showResults) {
+        testActive.current = false;
+        setShowAbortDialog(true);
+      }
+
+      lastWidth = window.innerWidth;
+      lastHeight = window.innerHeight;
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('blur', handleFocusChange);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('blur', handleFocusChange);
+      window.removeEventListener('resize', handleResize);
+    };
+  }, [showRules, showResults]);
+
+  // ==================== FULLSCREEN MANAGEMENT ====================
+  const requestFullScreen = () => {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen().catch((err) => {
+        console.warn('Could not enter full-screen mode:', err);
+        toast({
+          title: "Full-screen Unavailable",
+          description: "Please manually enter full-screen mode (F11) for the best experience.",
+          variant: "default",
+        });
+      });
+    }
+  };
+
+  const exitFullScreen = () => {
+    if (document.fullscreenElement) {
+      document.exitFullscreen();
+    }
+  };
+
+  const toggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      requestFullScreen();
+    } else {
+      exitFullScreen();
+    }
+  };
+
+  useEffect(() => {
+    const handleFullScreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', handleFullScreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullScreenChange);
+    };
+  }, []);
+
+  // Exit fullscreen when results shown or aborted
+  useEffect(() => {
+    if ((showResults || showAbortDialog) && document.fullscreenElement) {
+      exitFullScreen();
+    }
+  }, [showResults, showAbortDialog]);
+
+  // ==================== RULES & ABORT HANDLERS ====================
+  const handleAcceptRules = () => {
+    setShowRules(false);
+    testActive.current = true;
+    requestFullScreen();
+    toast({
+      title: "Test Started",
+      description: "You've accepted the rules. Your aptitude test has now begun. Do NOT switch tabs.",
+    });
+  };
+
+  const handleCancelRules = () => {
+    navigate('/home');
+  };
+
+  const handleAbortTest = () => {
+    // Save aborted result to Firestore so it shows in history & admin
+    if (user) {
+      const score = calculateScore();
+      const categoryPerf = getCategoryPerformance();
+      saveRound1AptitudeResult(
+        {
+          userId: user.id,
+          userEmail: user.email || '',
+          userName: user.name,
+          roleId: roleId!,
+          roleName: roleName!,
+          score: score.percentage,
+          totalQuestions: score.total,
+          correctAnswers: score.correct,
+          categoryPerformance: categoryPerf,
+          completedAt: new Date().toISOString(),
+          aborted: true,
+          abortReason: abortReason || 'Tab-switching, split-screen, or leaving the test window',
+        },
+        user.id
+      ).catch(err => console.error('Failed to save aborted result:', err));
+    }
+    setShowAbortDialog(false);
+    navigate('/home');
+    toast({
+      title: "Test Aborted",
+      description: abortReason || "Your aptitude test was aborted due to tab-switching, split-screen, or leaving the test window.",
+      variant: "destructive",
+    });
+  };
+
+  // Handle face proctoring — 1st strike = warning toast + banner
+  const handleFaceWarning = useCallback((violation: FaceViolation) => {
+    setBannerStrikeCount(1);
+    setBannerViolation(violation);
+    const desc =
+      violation.type === 'multiple_faces'
+        ? 'Multiple faces detected in your camera. Next violation will abort the test!'
+        : violation.type === 'prohibited_object'
+        ? 'Prohibited object (phone/book) detected! Remove it immediately. Next violation will abort!'
+        : 'No face detected for too long. Please stay in frame. Next violation will abort!';
+    toast({
+      title: "⚠️ Proctoring Warning (Strike 1/2)",
+      description: desc,
+      variant: "destructive",
+    });
+  }, [toast]);
+
+  // Handle face proctoring — 2nd strike = abort + banner
+  const handleFaceViolation = useCallback((violation: FaceViolation) => {
+    if (!testActive.current) return;
+    testActive.current = false;
+    setBannerStrikeCount(2);
+    setBannerViolation(violation);
+    const reason =
+      violation.type === 'multiple_faces'
+        ? 'Strike 2: Another person detected in frame again. Test aborted.'
+        : violation.type === 'prohibited_object'
+        ? 'Strike 2: Prohibited object detected again. Test aborted.'
+        : 'Strike 2: Face not detected for too long again. Test aborted.';
+    setAbortReason(reason);
+    setShowAbortDialog(true);
+  }, []);
 
   const handleAnswerSelect = (answerIndex: number) => {
     const newAnswers = [...userAnswers];
@@ -160,6 +360,17 @@ const Round1Aptitude = () => {
   const score = calculateScore();
   const categoryPerf = getCategoryPerformance();
 
+  // Show rules first before test begins
+  if (showRules) {
+    return (
+      <Layout>
+        <div className="container max-w-4xl mx-auto px-4 py-12">
+          <InterviewRules onAccept={handleAcceptRules} onCancel={handleCancelRules} />
+        </div>
+      </Layout>
+    );
+  }
+
   if (showResults) {
     return (
       <Layout>
@@ -270,9 +481,12 @@ const Round1Aptitude = () => {
             Monitoring Camera
           </div>
           <div className="h-40">
-            <WebcamPanel />
+            <WebcamPanel onViolation={handleFaceViolation} onWarning={handleFaceWarning} />
           </div>
         </div>
+
+        {/* Proctoring banner — full-width alert for violations */}
+        <ProctoringBanner violation={bannerViolation} strikeCount={bannerStrikeCount} />
 
         <Card>
           <CardHeader>
@@ -283,9 +497,24 @@ const Round1Aptitude = () => {
                   {roleName} Position - Formal Interview
                 </CardDescription>
               </div>
-              <Badge variant="outline" className="text-lg px-4 py-2">
-                Question {currentQuestionIndex + 1} / {questions.length}
-              </Badge>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={toggleFullScreen}
+                  className="flex items-center gap-2"
+                  title={isFullScreen ? 'Exit full-screen' : 'Enter full-screen'}
+                >
+                  {isFullScreen ? (
+                    <><Minimize className="h-4 w-4" /> Exit Full-screen</>
+                  ) : (
+                    <><Maximize className="h-4 w-4" /> Full-screen</>
+                  )}
+                </Button>
+                <Badge variant="outline" className="text-lg px-4 py-2">
+                  Question {currentQuestionIndex + 1} / {questions.length}
+                </Badge>
+              </div>
             </div>
 
             <Alert>
@@ -367,6 +596,22 @@ const Round1Aptitude = () => {
           </CardContent>
         </Card>
       </div>
+      {/* Abort Dialog */}
+      <AlertDialog open={showAbortDialog} onOpenChange={setShowAbortDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Test Aborted</AlertDialogTitle>
+            <AlertDialogDescription>
+              {abortReason || 'Your aptitude test has been aborted because you switched tabs, used split-screen, or exited the test window. Please start again without switching tabs or windows during the test.'}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction onClick={handleAbortTest}>
+              Return to Home
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </Layout>
   );
 };

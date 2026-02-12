@@ -1,17 +1,59 @@
-import { useEffect, useRef, useState } from 'react';
-import { Video, VideoOff } from 'lucide-react';
+import { useEffect, useRef, useState, useCallback } from 'react';
+import { Video, VideoOff, ShieldCheck, ShieldAlert, ShieldX, Loader2 } from 'lucide-react';
 import { Button } from './ui/button';
+import { useFaceDetection, type FaceViolation, type ProctorStatus } from '@/hooks/useFaceDetection';
+import { Smartphone } from 'lucide-react';
 
 interface WebcamPanelProps {
   onStreamReady?: (stream: MediaStream) => void;
+  /** Called only on the FATAL (2nd) violation — triggers abort in parent */
+  onViolation?: (violation: FaceViolation) => void;
+  /** Called on the 1st warning strike (non-fatal) — parent can log it */
+  onWarning?: (violation: FaceViolation) => void;
+  /** Enable AI face proctoring. Defaults to true. */
+  proctoring?: boolean;
+  /** Enable object detection for phones/books. Defaults to true. */
+  objectDetection?: boolean;
 }
 
-export default function WebcamPanel({ onStreamReady }: WebcamPanelProps) {
+const STATUS_CONFIG: Record<ProctorStatus, { color: string; bg: string; icon: typeof ShieldCheck }> = {
+  loading: { color: 'text-blue-300', bg: 'bg-blue-500/80', icon: Loader2 },
+  ok:      { color: 'text-green-300', bg: 'bg-green-600/80', icon: ShieldCheck },
+  warning: { color: 'text-yellow-300', bg: 'bg-yellow-500/80', icon: ShieldAlert },
+  violation: { color: 'text-red-300', bg: 'bg-red-600/90', icon: ShieldX },
+};
+
+export default function WebcamPanel({ onStreamReady, onViolation, onWarning, proctoring = true, objectDetection = true }: WebcamPanelProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [stream, setStream] = useState<MediaStream | null>(null);
   const [error, setError] = useState<string>('');
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
 
+  // ── Stable callback refs so the hook doesn't re-trigger ──
+  const onViolationRef = useRef(onViolation);
+  onViolationRef.current = onViolation;
+  const onWarningRef = useRef(onWarning);
+  onWarningRef.current = onWarning;
+
+  // ── Face detection hook ──────────────────────────────────
+  const { status, faceCount, violation, warningCount, statusMessage, detectedObjects } = useFaceDetection(videoRef, {
+    enabled: proctoring && isVideoEnabled && !error,
+    intervalMs: 1500,
+    noFaceStrikeSec: 7,
+    objectDetection: proctoring && objectDetection,
+  });
+
+  // Forward violations to parent — only fatal ones trigger abort
+  useEffect(() => {
+    if (!violation) return;
+    if (violation.isFatal) {
+      onViolationRef.current?.(violation);
+    } else {
+      onWarningRef.current?.(violation);
+    }
+  }, [violation]);
+
+  // ── Webcam start / stop ──────────────────────────────────
   useEffect(() => {
     let currentStream: MediaStream | null = null;
 
@@ -19,8 +61,8 @@ export default function WebcamPanel({ onStreamReady }: WebcamPanelProps) {
       try {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
           video: {
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
+            width: { ideal: 640 },
+            height: { ideal: 480 },
             facingMode: 'user',
           },
           audio: false,
@@ -58,6 +100,10 @@ export default function WebcamPanel({ onStreamReady }: WebcamPanelProps) {
     }
   };
 
+  // Resolve status badge config
+  const cfg = STATUS_CONFIG[status];
+  const StatusIcon = cfg.icon;
+
   return (
     <div className="relative w-full h-full bg-gray-900 rounded-lg overflow-hidden">
       {error ? (
@@ -75,29 +121,105 @@ export default function WebcamPanel({ onStreamReady }: WebcamPanelProps) {
             playsInline
             muted
             className="w-full h-full object-cover"
-            style={{ transform: 'scaleX(-1)' }} // Mirror effect
+            style={{ transform: 'scaleX(-1)' }}
           />
 
-          {/* Video Toggle Button */}
-          <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2">
+          {/* ── Proctor Status Badge (top-left) ── */}
+          {proctoring && (
+            <div
+              className={`absolute top-2 left-2 flex items-center gap-1.5 ${cfg.bg} px-2 py-1 rounded-full transition-colors duration-300`}
+            >
+              <StatusIcon
+                className={`w-3 h-3 ${cfg.color} ${status === 'loading' ? 'animate-spin' : ''}`}
+              />
+              <span className="text-white text-[10px] font-medium leading-none max-w-[130px] truncate">
+                {statusMessage}
+              </span>
+            </div>
+          )}
+
+          {/* ── Strike Counter + Face Count (top-right) ── */}
+          <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+            {/* Strike counter */}
+            {proctoring && (
+              <div
+                className={`flex items-center gap-1 px-2 py-0.5 rounded-full ${
+                  warningCount >= 2
+                    ? 'bg-red-600/90'
+                    : warningCount === 1
+                    ? 'bg-yellow-500/80'
+                    : 'bg-green-600/80'
+                }`}
+              >
+                <span className="text-white text-[10px] font-bold">
+                  {warningCount}/2 strikes
+                </span>
+              </div>
+            )}
+            {/* Face count */}
+            <div
+              className={`flex items-center gap-1.5 px-2 py-0.5 rounded-full ${
+                status === 'violation'
+                  ? 'bg-red-600/90'
+                  : status === 'warning'
+                  ? 'bg-yellow-500/80'
+                  : 'bg-green-600/80'
+              }`}
+            >
+              <div
+                className={`w-2 h-2 rounded-full ${
+                  status === 'violation' ? 'bg-red-300' : 'bg-white'
+                } ${status !== 'loading' ? 'animate-pulse' : ''}`}
+              />
+              <span className="text-white text-[10px] font-medium">
+                {status === 'loading' ? 'INIT' : `${faceCount} face${faceCount !== 1 ? 's' : ''}`}
+              </span>
+            </div>
+            {/* Detected prohibited objects */}
+            {detectedObjects.length > 0 && (
+              <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-600/90">
+                <Smartphone className="w-2.5 h-2.5 text-red-200" />
+                <span className="text-white text-[10px] font-bold">
+                  {[...new Set(detectedObjects.map((o) => o.class))].join(', ')}
+                </span>
+              </div>
+            )}
+          </div>
+
+          {/* ── Warning / Violation overlay ── */}
+          {(status === 'warning' || status === 'violation') && (
+            <div
+              className={`absolute inset-0 flex items-center justify-center ${
+                status === 'violation' ? 'bg-red-900/60' : 'bg-yellow-900/40'
+              } transition-colors duration-300`}
+            >
+              <div className="text-center px-3">
+                <ShieldAlert
+                  className={`w-8 h-8 mx-auto mb-1 ${
+                    status === 'violation' ? 'text-red-400' : 'text-yellow-400'
+                  } animate-pulse`}
+                />
+                <p className="text-white text-xs font-semibold drop-shadow-md">
+                  {statusMessage}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* ── Video Toggle Button ── */}
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2">
             <Button
               variant="outline"
               size="sm"
               onClick={toggleVideo}
-              className="bg-black/50 border-white/20 hover:bg-black/70"
+              className="bg-black/50 border-white/20 hover:bg-black/70 h-7 px-2"
             >
               {isVideoEnabled ? (
-                <Video className="w-4 h-4 text-white" />
+                <Video className="w-3.5 h-3.5 text-white" />
               ) : (
-                <VideoOff className="w-4 h-4 text-white" />
+                <VideoOff className="w-3.5 h-3.5 text-white" />
               )}
             </Button>
-          </div>
-
-          {/* Recording Indicator */}
-          <div className="absolute top-4 right-4 flex items-center gap-2 bg-red-500/80 px-3 py-1 rounded-full">
-            <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
-            <span className="text-white text-xs font-medium">REC</span>
           </div>
         </>
       )}

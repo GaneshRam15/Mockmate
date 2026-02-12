@@ -11,6 +11,7 @@ import { useAuth } from "@/contexts/AuthContext";
 const Home = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const [isRoleConfiguring, setIsRoleConfiguring] = useState(false);
   
   // Animation variants
   const sectionVariants = {
@@ -47,6 +48,7 @@ const Home = () => {
   
   return (
     <Layout>
+      {!isRoleConfiguring && (
       <div className="bg-gradient-to-b from-mockmate-light to-white dark:from-gray-900 dark:to-gray-950">
         <div className="container max-w-6xl mx-auto px-4 py-16 md:py-24">
           <motion.div 
@@ -107,12 +109,15 @@ const Home = () => {
           </motion.div>
         </div>
       </div>
+      )}
       
       <div id="role-selector">
-        <RoleSelector />
+        <RoleSelector onViewChange={setIsRoleConfiguring} />
       </div>
       
       {/* Why Us Section */}
+      {!isRoleConfiguring && (
+      <>
       <motion.section 
         className="py-16 bg-mockmate-light dark:bg-gray-900"
         initial="hidden"
@@ -323,6 +328,8 @@ const Home = () => {
           </motion.div>
         </div>
       </motion.section>
+      </>
+      )}
     </Layout>
   );
 };

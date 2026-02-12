@@ -25,9 +25,10 @@ interface RoleSelectorProps {
   onRoleSelect?: (roleId: string, resumeData?: ResumeData) => Promise<void>;
   mode?: "test" | "practice";
   className?: string;
+  onViewChange?: (isResumeUpload: boolean) => void;
 }
 
-const RoleSelector = ({ onRoleSelect, mode = "test", className }: RoleSelectorProps) => {
+const RoleSelector = ({ onRoleSelect, mode = "test", className, onViewChange }: RoleSelectorProps) => {
   const { startInterview, isLoading } = useInterview();
   const navigate = useNavigate();
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
@@ -47,6 +48,7 @@ const RoleSelector = ({ onRoleSelect, mode = "test", className }: RoleSelectorPr
     // For test mode, show resume upload
     setSelectedRole(roleId);
     setShowResumeUpload(true);
+    onViewChange?.(true);
   };
 
   const handleResumeProcessed = async (resume: ResumeData) => {
@@ -153,6 +155,7 @@ const RoleSelector = ({ onRoleSelect, mode = "test", className }: RoleSelectorPr
             onClick={() => {
               setShowResumeUpload(false);
               setSelectedRole(null);
+              onViewChange?.(false);
             }}
           >
             ← Back to Role Selection
