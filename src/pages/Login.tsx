@@ -196,13 +196,13 @@ const Login = () => {
   };
   
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-mockmate-light to-white p-4">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-mockmate-light to-white dark:from-mockmate-dark dark:to-gray-900 p-4">
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[380px]">
         <div className="flex flex-col space-y-2 text-center">
           <div className="flex justify-center">
             <Clock className="h-8 w-8 text-mockmate-primary" />
           </div>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="text-2xl font-bold tracking-tight text-mockmate-secondary dark:text-white">
             Welcome to <span className="text-mockmate-primary">MockMate</span>
           </h1>
           <p className="text-sm text-muted-foreground">
