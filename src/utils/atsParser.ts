@@ -21,6 +21,12 @@ const roleRequirements: Record<string, {
     minExperience: 2,
     education: ['computer science', 'software engineering', 'information technology', 'engineering', 'it', 'cs', 'computer', 'software']
   },
+  'data-analyst': {
+    skills: ['sql', 'excel', 'python', 'r', 'tableau', 'power bi', 'data visualization', 'statistics', 'statistical analysis', 'data mining', 'etl', 'data warehousing', 'business intelligence', 'bi', 'looker', 'qlik', 'sas', 'spss', 'pandas', 'numpy', 'jupyter', 'reporting', 'dashboard', 'kpi', 'metrics', 'analytics'],
+    keySkills: ['sql', 'excel', 'python', 'tableau', 'power bi', 'data visualization'],
+    minExperience: 1,
+    education: ['statistics', 'mathematics', 'business analytics', 'data science', 'economics', 'business', 'computer science']
+  },
   'product-manager': {
     skills: ['product management', 'product', 'agile', 'scrum', 'roadmap', 'stakeholder', 'analytics', 'user research', 'jira', 'strategy', 'kpi', 'okr', 'metrics', 'a/b testing', 'user stories', 'backlog', 'prioritization', 'market research', 'competitive analysis', 'go-to-market', 'gtm', 'product lifecycle', 'product strategy', 'data-driven', 'sql', 'excel', 'powerpoint', 'presentation'],
     keySkills: ['product management', 'agile', 'roadmap', 'stakeholder', 'analytics', 'user research'],
@@ -50,6 +56,96 @@ const roleRequirements: Record<string, {
     keySkills: ['sales', 'crm', 'negotiation', 'prospecting', 'closing', 'pipeline'],
     minExperience: 1,
     education: ['business', 'marketing', 'communications', 'sales', 'commerce', 'business administration']
+  },
+  'hr-manager': {
+    skills: ['recruitment', 'talent acquisition', 'employee relations', 'hris', 'workday', 'adp', 'onboarding', 'performance management', 'compensation', 'benefits', 'compliance', 'labor law', 'training', 'development', 'hr policies', 'conflict resolution', 'diversity', 'inclusion', 'culture', 'engagement', 'retention', 'succession planning'],
+    keySkills: ['recruitment', 'employee relations', 'hris', 'compliance', 'training'],
+    minExperience: 3,
+    education: ['human resources', 'business', 'psychology', 'organizational behavior', 'hr management']
+  },
+  'cloud-engineer': {
+    skills: ['aws', 'azure', 'gcp', 'google cloud', 'docker', 'kubernetes', 'terraform', 'ansible', 'devops', 'ci/cd', 'jenkins', 'gitlab ci', 'github actions', 'infrastructure as code', 'iac', 'cloudformation', 'monitoring', 'prometheus', 'grafana', 'networking', 'security', 'linux', 'bash', 'python', 'microservices', 'serverless', 'lambda', 'containers'],
+    keySkills: ['aws', 'azure', 'docker', 'kubernetes', 'terraform', 'devops'],
+    minExperience: 2,
+    education: ['computer science', 'information technology', 'engineering', 'cloud computing']
+  },
+  'cybersecurity-analyst': {
+    skills: ['penetration testing', 'ethical hacking', 'vulnerability assessment', 'security audits', 'cissp', 'ceh', 'network security', 'firewall', 'ids', 'ips', 'siem', 'splunk', 'threat intelligence', 'incident response', 'forensics', 'compliance', 'iso 27001', 'gdpr', 'nist', 'risk assessment', 'encryption', 'vpn', 'malware analysis', 'wireshark'],
+    keySkills: ['penetration testing', 'network security', 'cissp', 'siem', 'incident response'],
+    minExperience: 2,
+    education: ['cybersecurity', 'information security', 'computer science', 'information technology']
+  },
+  'business-analyst': {
+    skills: ['requirements gathering', 'business analysis', 'process mapping', 'bpmn', 'uml', 'stakeholder analysis', 'gap analysis', 'user stories', 'jira', 'confluence', 'sql', 'data analysis', 'excel', 'visio', 'lucidchart', 'agile', 'scrum', 'documentation', 'use cases', 'functional requirements', 'wireframing', 'testing'],
+    keySkills: ['requirements gathering', 'process mapping', 'stakeholder analysis', 'sql', 'agile'],
+    minExperience: 2,
+    education: ['business', 'management', 'information systems', 'computer science', 'mba']
+  },
+  'devops-engineer': {
+    skills: ['ci/cd', 'jenkins', 'gitlab ci', 'github actions', 'docker', 'kubernetes', 'k8s', 'terraform', 'ansible', 'chef', 'puppet', 'aws', 'azure', 'gcp', 'cloud', 'linux', 'bash', 'python', 'scripting', 'monitoring', 'prometheus', 'grafana', 'elk', 'infrastructure as code', 'iac', 'automation', 'git', 'nginx', 'apache', 'microservices', 'helm', 'argocd', 'cloudformation', 'deployment', 'build pipelines'],
+    keySkills: ['ci/cd', 'docker', 'kubernetes', 'terraform', 'aws', 'jenkins'],
+    minExperience: 2,
+    education: ['computer science', 'information technology', 'engineering', 'systems']
+  },
+  'full-stack-developer': {
+    skills: ['javascript', 'typescript', 'react', 'vue', 'angular', 'node', 'nodejs', 'express', 'nestjs', 'python', 'django', 'flask', 'java', 'spring', 'dotnet', 'c#', 'sql', 'postgresql', 'mysql', 'mongodb', 'redis', 'api', 'rest', 'graphql', 'html', 'css', 'sass', 'tailwind', 'webpack', 'vite', 'git', 'docker', 'aws', 'azure', 'testing', 'jest', 'mocha', 'prisma', 'orm', 'authentication'],
+    keySkills: ['javascript', 'react', 'node', 'sql', 'api', 'mongodb', 'typescript'],
+    minExperience: 2,
+    education: ['computer science', 'software engineering', 'information technology', 'engineering']
+  },
+  'mobile-app-developer': {
+    skills: ['react native', 'flutter', 'swift', 'kotlin', 'ios', 'android', 'xcode', 'android studio', 'mobile ui/ux', 'rest api', 'firebase', 'app store', 'play store', 'push notifications', 'mobile testing', 'responsive design', 'native modules', 'expo', 'fastlane', 'app deployment', 'offline storage', 'sqlite', 'realm', 'mobile analytics', 'crash reporting', 'performance optimization', 'dart', 'java'],
+    keySkills: ['react native', 'flutter', 'swift', 'kotlin', 'mobile ui/ux', 'firebase'],
+    minExperience: 2,
+    education: ['computer science', 'software engineering', 'mobile development', 'engineering']
+  },
+  'ai-ml-research-scientist': {
+    skills: ['python', 'deep learning', 'neural networks', 'tensorflow', 'pytorch', 'keras', 'machine learning', 'research', 'papers', 'publications', 'algorithms', 'mathematics', 'transformers', 'attention', 'llm', 'nlp', 'computer vision', 'reinforcement learning', 'optimization', 'experiment design', 'statistics', 'model architecture', 'gpu computing', 'distributed training', 'research methodology', 'arxiv', 'peer review', 'latex'],
+    keySkills: ['deep learning', 'tensorflow', 'pytorch', 'research', 'neural networks', 'python'],
+    minExperience: 3,
+    education: ['phd', 'computer science', 'machine learning', 'ai', 'mathematics', 'physics']
+  },
+  'blockchain-developer': {
+    skills: ['solidity', 'ethereum', 'smart contracts', 'web3', 'blockchain', 'defi', 'nft', 'cryptocurrency', 'truffle', 'hardhat', 'ethers.js', 'web3.js', 'metamask', 'rust', 'solana', 'polygon', 'layer 2', 'consensus', 'cryptography', 'security auditing', 'gas optimization', 'evm', 'dapps', 'ipfs', 'dao', 'tokenomics', 'upgradeable contracts'],
+    keySkills: ['solidity', 'ethereum', 'smart contracts', 'web3', 'defi', 'blockchain'],
+    minExperience: 2,
+    education: ['computer science', 'cryptography', 'mathematics', 'engineering', 'blockchain']
+  },
+  'game-developer': {
+    skills: ['unity', 'unreal engine', 'unreal', 'c#', 'c++', 'game development', 'game design', '3d modeling', 'physics', 'graphics', 'shaders', 'animation', 'ar', 'vr', 'augmented reality', 'virtual reality', 'multiplayer', 'networking', 'ai pathfinding', 'optimization', 'mobile games', 'console development', 'gameplay programming', 'ui/ux', 'procedural generation', 'game engines', 'blender', 'maya', 'rendering', 'opengl', 'directx', 'vulkan'],
+    keySkills: ['unity', 'unreal engine', 'c#', 'c++', 'game development', '3d modeling'],
+    minExperience: 2,
+    education: ['game development', 'computer science', 'interactive media', 'digital arts', 'engineering', 'game design']
+  },
+  'embedded-systems-engineer': {
+    skills: ['c', 'c++', 'embedded c', 'microcontroller', 'arduino', 'raspberry pi', 'arm', 'rtos', 'freertos', 'embedded linux', 'firmware', 'hardware', 'iot', 'sensors', 'i2c', 'spi', 'uart', 'can bus', 'modbus', 'assembly', 'debugging', 'oscilloscope', 'power management', 'wireless', 'bluetooth', 'wifi', 'low power', 'real-time systems'],
+    keySkills: ['c', 'c++', 'microcontroller', 'rtos', 'embedded systems', 'firmware'],
+    minExperience: 2,
+    education: ['electrical engineering', 'computer engineering', 'electronics', 'embedded systems']
+  },
+  'sre': {
+    skills: ['sre', 'site reliability', 'kubernetes', 'docker', 'monitoring', 'prometheus', 'grafana', 'incident response', 'on-call', 'slo', 'sli', 'sla', 'observability', 'distributed systems', 'linux', 'aws', 'gcp', 'azure', 'terraform', 'ansible', 'ci/cd', 'performance', 'scalability', 'load balancing', 'capacity planning', 'chaos engineering', 'postmortem', 'alerting', 'logging', 'elk', 'splunk', 'automation', 'troubleshooting'],
+    keySkills: ['sre', 'kubernetes', 'monitoring', 'incident response', 'slo', 'distributed systems'],
+    minExperience: 3,
+    education: ['computer science', 'software engineering', 'information technology', 'systems engineering']
+  },
+  'computer-vision-engineer': {
+    skills: ['computer vision', 'opencv', 'image processing', 'deep learning', 'cnn', 'yolo', 'object detection', 'image segmentation', 'facial recognition', 'tensorflow', 'pytorch', 'python', 'c++', 'video processing', 'tracking', 'ocr', '3d vision', 'depth estimation', 'slam', 'augmented reality', 'point cloud', 'calibration', 'edge computing', 'cuda', 'real-time processing', 'annotation', 'dataset creation', 'model optimization'],
+    keySkills: ['computer vision', 'opencv', 'deep learning', 'object detection', 'python', 'tensorflow'],
+    minExperience: 2,
+    education: ['computer science', 'computer vision', 'ai', 'robotics', 'electrical engineering']
+  },
+  'network-security-engineer': {
+    skills: ['network security', 'firewall', 'vpn', 'ids', 'ips', 'intrusion detection', 'wireshark', 'tcp/ip', 'network protocols', 'cisco', 'palo alto', 'fortinet', 'security auditing', 'vulnerability assessment', 'penetration testing', 'siem', 'splunk', 'network monitoring', 'packet analysis', 'ddos mitigation', 'zero trust', 'network segmentation', 'compliance', 'iso 27001', 'nist', 'encryption', 'ssl', 'tls', 'dns security', 'routing', 'switching'],
+    keySkills: ['network security', 'firewall', 'ids', 'penetration testing', 'tcp/ip', 'vpn'],
+    minExperience: 2,
+    education: ['cybersecurity', 'network security', 'information security', 'computer science']
+  },
+  'qa-engineer': {
+    skills: ['quality assurance', 'test automation', 'selenium', 'cypress', 'playwright', 'testing', 'manual testing', 'test plans', 'test cases', 'bug tracking', 'jira', 'api testing', 'postman', 'performance testing', 'jmeter', 'load testing', 'regression testing', 'ci/cd', 'jenkins', 'agile', 'scrum', 'test strategy', 'functional testing', 'non-functional testing', 'accessibility testing', 'security testing', 'mobile testing'],
+    keySkills: ['test automation', 'selenium', 'testing', 'qa', 'bug tracking', 'api testing'],
+    minExperience: 2,
+    education: ['computer science', 'software engineering', 'information technology', 'qa']
   }
 };
 
@@ -197,20 +293,25 @@ export const calculateATSScore = (
   parsedData: ResumeData['parsedData'],
   roleId: string
 ): { score: number; analysis: ResumeData['atsAnalysis'] } => {
-  const requirements = roleRequirements[roleId];
+  let requirements = roleRequirements[roleId];
   
   if (!requirements) {
-    console.warn(`No requirements found for role: ${roleId}, using default`);
-    return {
-      score: 0,
-      analysis: {
-        matchedSkills: [],
-        missingSkills: [],
-        experienceMatch: 0,
-        educationMatch: 0,
-        overallMatch: 0
-      }
-    };
+    console.warn(`No requirements found for role: ${roleId}, using software-engineer as fallback`);
+    // Use software-engineer as fallback but cap the max score at 50% since it's not the target role
+    requirements = roleRequirements['software-engineer'];
+    if (!requirements) {
+      // Ultimate fallback if even software-engineer is missing
+      return {
+        score: 0,
+        analysis: {
+          matchedSkills: [],
+          missingSkills: ['Unable to evaluate - role requirements not found'],
+          experienceMatch: 0,
+          educationMatch: 0,
+          overallMatch: 0
+        }
+      };
+    }
   }
   
   console.log('Calculating ATS for role:', roleId);

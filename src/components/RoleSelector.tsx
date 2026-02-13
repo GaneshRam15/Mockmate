@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { getOpenRoles } from "@/utils/roleManagement";
+import { useState, useEffect } from "react";
+import { subscribeToRoleChanges } from "@/utils/roleManagement";
 import { jobRoles } from "@/utils/interviewUtils";
+import { JobRole } from "@/types";
 import { useInterview } from "@/contexts/InterviewContext";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
@@ -34,9 +35,24 @@ const RoleSelector = ({ onRoleSelect, mode = "test", className, onViewChange }: 
   const [selectedRole, setSelectedRole] = useState<string | null>(null);
   const [showResumeUpload, setShowResumeUpload] = useState(false);
   const [resumeData, setResumeData] = useState<ResumeData | null>(null);
+  const [openRolesFromDB, setOpenRolesFromDB] = useState<JobRole[]>([]);
+  const [rolesLoading, setRolesLoading] = useState(mode === "test"); // loading only for test mode
   
-  // For practice mode, show all roles; for test mode, show only open roles
-  const availableRoles = mode === "practice" ? jobRoles : getOpenRoles();
+  // Subscribe to real-time role changes from Firestore for test mode
+  useEffect(() => {
+    if (mode === "practice") return; // practice mode shows all roles, no need to subscribe
+    
+    setRolesLoading(true);
+    const unsubscribe = subscribeToRoleChanges((roles) => {
+      const open = roles.filter(r => r.isOpen);
+      setOpenRolesFromDB(open);
+      setRolesLoading(false);
+    });
+    return () => unsubscribe();
+  }, [mode]);
+  
+  // For practice mode, show all roles; for test mode, show only open roles (from Firestore)
+  const availableRoles = mode === "practice" ? jobRoles : openRolesFromDB;
   
   const handleRoleSelect = (roleId: string) => {
     if (mode === "practice" && onRoleSelect) {
@@ -172,6 +188,30 @@ const RoleSelector = ({ onRoleSelect, mode = "test", className, onViewChange }: 
         Select the job role you want to practice interviewing for. We'll generate role-specific questions to help you prepare.
       </p>
       
+      {/* Loading Skeleton */}
+      {rolesLoading && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+            <Card key={i} className="h-full border-2 border-gray-200 bg-white dark:bg-gray-800 dark:border-gray-700 animate-pulse">
+              <CardHeader className="pb-3">
+                <div className="w-16 h-16 bg-gray-200 dark:bg-gray-700 rounded-full mx-auto mb-4" />
+                <div className="h-5 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mx-auto" />
+              </CardHeader>
+              <CardContent className="text-center">
+                <div className="space-y-2">
+                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-full" />
+                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-5/6 mx-auto" />
+                </div>
+              </CardContent>
+              <CardFooter className="pt-0 justify-center">
+                <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-24" />
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      )}
+      
+      {!rolesLoading && (
       <motion.div 
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
         variants={container}
@@ -220,6 +260,7 @@ const RoleSelector = ({ onRoleSelect, mode = "test", className, onViewChange }: 
           </div>
         )}
       </motion.div>
+      )}
       
       <div className="mt-12 text-center">
         <Button 

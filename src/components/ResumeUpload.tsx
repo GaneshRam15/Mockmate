@@ -416,11 +416,11 @@ export const ResumeUpload = ({ roleId, onResumeProcessed, minimumScore = 60, sho
                       </AlertDescription>
                     </Alert>
                   ) : (
-                    <Alert variant="destructive">
+                    <Alert variant="destructive" className="border-2">
                       <XCircle className="h-4 w-4" />
                       <AlertDescription>
-                        Your resume score is below the minimum threshold of {minimumScore}%. 
-                        Please update your resume and try again.
+                        Your resume score ({resume.atsScore}%) is below the minimum threshold of {minimumScore}%. 
+                        <strong className="block mt-1">Review the learning recommendations below to improve your skills and try again.</strong>
                       </AlertDescription>
                     </Alert>
                   )}
@@ -431,7 +431,18 @@ export const ResumeUpload = ({ roleId, onResumeProcessed, minimumScore = 60, sho
 
           {/* Learning Recommendations for Resume Analysis */}
           {skillGapAnalysis && resume && (
-            <div className="mt-6">
+            <div className={`mt-6 ${resume.atsScore < minimumScore ? 'ring-2 ring-amber-400 rounded-lg p-2 bg-amber-50/50' : ''}`}>
+              {resume.atsScore < minimumScore && (
+                <div className="mb-4 p-3 bg-amber-100 border border-amber-300 rounded-lg">
+                  <p className="font-semibold text-amber-900 flex items-center gap-2">
+                    <AlertCircle className="h-5 w-5" />
+                    🎯 Focus on these skills to improve your resume score
+                  </p>
+                  <p className="text-sm text-amber-800 mt-1">
+                    Complete the recommended courses below to strengthen your profile for this role.
+                  </p>
+                </div>
+              )}
               <LearningRecommendations 
                 skillGapAnalysis={skillGapAnalysis}
                 title="📚 Skill Gap Analysis & Learning Recommendations"

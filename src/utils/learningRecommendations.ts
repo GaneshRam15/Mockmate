@@ -290,7 +290,7 @@ const courseDatabase: CourseRecommendation[] = [
     price: "$49/month",
     rating: 4.8,
     description: "Learn UX design fundamentals, prototyping, and user research",
-    skills: ["ux design", "ui design", "prototyping", "user research", "figma", "design thinking", "ui-ux-designer"]
+    skills: ["ux design", "ui design", "prototyping", "user research", "figma", "design thinking", "ux-designer"]
   },
   {
     id: "figma-youtube",
@@ -302,7 +302,7 @@ const courseDatabase: CourseRecommendation[] = [
     price: "Free",
     rating: 4.7,
     description: "Complete Figma tutorial covering design basics to advanced features",
-    skills: ["figma", "ui design", "prototyping", "design tools", "ui-ux-designer"]
+    skills: ["figma", "ui design", "prototyping", "design tools", "ux-designer"]
   },
   {
     id: "design-thinking-ideo",
@@ -314,7 +314,7 @@ const courseDatabase: CourseRecommendation[] = [
     price: "$49/month",
     rating: 4.6,
     description: "Learn design thinking methodology for innovation",
-    skills: ["design thinking", "innovation", "problem solving", "creativity", "ux design", "ui-ux-designer"]
+    skills: ["design thinking", "innovation", "problem solving", "creativity", "ux design", "ux-designer"]
   },
   {
     id: "adobe-xd-udemy",
@@ -326,7 +326,7 @@ const courseDatabase: CourseRecommendation[] = [
     price: "$84.99",
     rating: 4.4,
     description: "Master Adobe XD for UI/UX design and prototyping",
-    skills: ["adobe xd", "ui design", "prototyping", "design tools", "ui-ux-designer"]
+    skills: ["adobe xd", "ui design", "prototyping", "design tools", "ux-designer"]
   },
 
   // ============= DEVOPS ENGINEER COURSES =============
@@ -613,9 +613,9 @@ const roleSkillMaps: Record<string, string[]> = {
     "sql", "tableau", "data visualization", "data analysis", "business intelligence",
     "statistics", "data-analyst"
   ],
-  "ui-ux-designer": [
+  "ux-designer": [
     "ux design", "ui design", "figma", "adobe xd", "design thinking", "prototyping", 
-    "user research", "design tools", "innovation", "problem solving", "creativity", "ui-ux-designer"
+    "user research", "design tools", "innovation", "problem solving", "creativity", "ux-designer"
   ],
   "product-manager": [
     "product management", "strategy", "user research", "analytics", "roadmapping",
@@ -649,6 +649,40 @@ const roleSkillMaps: Record<string, string[]> = {
   "sales-representative": [
     "sales techniques", "communication", "negotiation", "crm", "lead generation",
     "sales process", "persuasion", "conflict resolution", "cold calling", "sales-representative"
+  ],
+  "mobile-app-developer": [
+    "mobile development", "android", "ios", "react native", "flutter", "swift", "kotlin",
+    "mobile ui", "app store", "mobile architecture", "javascript", "mobile-app-developer"
+  ],
+  "ai-ml-research-scientist": [
+    "machine learning", "deep learning", "neural networks", "pytorch", "tensorflow",
+    "research", "python", "statistics", "mathematics", "computer vision", "nlp",
+    "artificial intelligence", "ai-ml-research-scientist"
+  ],
+  "blockchain-developer": [
+    "blockchain", "solidity", "ethereum", "smart contracts", "web3", "cryptocurrency",
+    "distributed systems", "cryptography", "javascript", "defi", "blockchain-developer"
+  ],
+  "game-developer": [
+    "game development", "unity", "unreal engine", "c++", "c#", "game design",
+    "3d modeling", "graphics programming", "physics simulation", "game-developer"
+  ],
+  "embedded-systems-engineer": [
+    "embedded systems", "c", "c++", "microcontrollers", "arduino", "raspberry pi",
+    "rtos", "firmware", "hardware", "electronics", "iot", "embedded-systems-engineer"
+  ],
+  "sre": [
+    "site reliability", "sre", "devops", "monitoring", "kubernetes", "docker",
+    "automation", "linux", "incident management", "observability", "terraform", "sre"
+  ],
+  "computer-vision-engineer": [
+    "computer vision", "opencv", "image processing", "deep learning", "python",
+    "neural networks", "object detection", "machine learning", "tensorflow", "pytorch",
+    "computer-vision-engineer"
+  ],
+  "network-security-engineer": [
+    "network security", "firewalls", "vpn", "intrusion detection", "penetration testing",
+    "cybersecurity", "networking", "tcp/ip", "security protocols", "network-security-engineer"
   ]
 };
 

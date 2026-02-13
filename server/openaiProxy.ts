@@ -388,17 +388,26 @@ async function handleAnalyzeResume(apiKey: string, body: any, res: ServerRespons
   const result = await callOpenAI(apiKey, [
     {
       role: 'system',
-      content: 'You are an ATS (Applicant Tracking System) expert, HR recruiter, and AI resume analyst. Always respond with valid JSON only, no markdown.'
+      content: `You are an ATS (Applicant Tracking System) expert and strict HR recruiter evaluating resumes for "${targetRole}" position. Always respond with valid JSON only, no markdown. BE STRICT AND REALISTIC with scoring - if the candidate's background doesn't match the target role, the score MUST be low.`
     },
     {
       role: 'user',
-      content: `Analyze the following resume and produce a complete ATS-friendly evaluation.
+      content: `CRITICAL: Evaluate this resume SPECIFICALLY for the "${targetRole}" role. The ats_match_score MUST reflect how well this candidate fits THIS SPECIFIC ROLE.
+
+Scoring Guidelines for "${targetRole}":
+- 80-100: Excellent match - has most required skills, relevant experience, appropriate education
+- 60-79: Good match - has some relevant skills but may lack key requirements
+- 40-59: Fair match - has transferable skills but significant gaps
+- 20-39: Poor match - lacks most requirements
+- 0-19: Not a match - no relevant background
+
+BE STRICT: If candidate's background doesn't align with "${targetRole}" requirements, score MUST be LOW even if they have good credentials in other fields.
 
 Your output MUST follow this JSON structure:
 
 {
   "candidate_summary": "short 3–4 line summary of the candidate",
-  "detected_role": "best-fit job role based on resume",
+  "detected_role": "best-fit job role based on resume (may differ from target role)",
   "skills_extracted": {
       "technical_skills": [list],
       "soft_skills": [list],
@@ -407,20 +416,20 @@ Your output MUST follow this JSON structure:
   },
   "experience": {
       "total_years": number,
-      "relevant_experience_years": number,
+      "relevant_experience_years": number (ONLY count experience relevant to ${targetRole}),
       "project_summary": [list of short project descriptions]
   },
   "education": [list of degrees and institutions],
   "achievements": [list],
-  "ats_match_score": number (0-100),
-  "missing_skills_for_target_role": [list of missing or weak skills],
-  "red_flags": [list of concerns or missing information],
-  "improvements": [list of recommendations to improve resume],
+  "ats_match_score": number (0-100, MUST reflect fit for ${targetRole} specifically),
+  "missing_skills_for_target_role": [list of skills required for ${targetRole} that candidate lacks],
+  "red_flags": [list of concerns - include if candidate's background doesn't match ${targetRole}],
+  "improvements": [list of recommendations to improve resume for ${targetRole}],
   "role_specific_analysis": {
       "target_role": "${targetRole}",
-      "match_percentage": number (0-100),
-      "matched_skills": [list],
-      "unmatched_skills": [list]
+      "match_percentage": number (0-100, same strict criteria as ats_match_score),
+      "matched_skills": [list of skills relevant to ${targetRole}],
+      "unmatched_skills": [list of required ${targetRole} skills candidate lacks]
   }
 }
 
@@ -428,7 +437,9 @@ Here is the resume text:
 "${truncatedText}"
 
 Important rules:
-- If data is missing, leave it empty instead of guessing.
+- BE REALISTIC AND STRICT - do not inflate scores
+- If the candidate's background doesn't match ${targetRole}, score MUST be below 40%
+- ats_match_score and match_percentage should be very close (within 5 points)
 - Return ONLY valid JSON, no extra text.`
     }
   ], { temperature: 0.2, max_tokens: 2048 });

@@ -598,15 +598,18 @@ const Round1Aptitude = () => {
       </div>
       {/* Abort Dialog */}
       <AlertDialog open={showAbortDialog} onOpenChange={setShowAbortDialog}>
-        <AlertDialogContent>
+        <AlertDialogContent className="z-[9999] fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 max-w-md border-2 border-red-500 shadow-2xl bg-white">
           <AlertDialogHeader>
-            <AlertDialogTitle>Test Aborted</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-xl font-bold text-red-600">Test Aborted</AlertDialogTitle>
+            <AlertDialogDescription className="text-base">
               {abortReason || 'Your aptitude test has been aborted because you switched tabs, used split-screen, or exited the test window. Please start again without switching tabs or windows during the test.'}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={handleAbortTest}>
+            <AlertDialogAction 
+              onClick={handleAbortTest}
+              className="bg-red-600 hover:bg-red-700 text-white font-semibold px-6 py-3 text-base"
+            >
               Return to Home
             </AlertDialogAction>
           </AlertDialogFooter>

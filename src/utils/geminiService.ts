@@ -403,15 +403,29 @@ export const analyzeResumeWithGemini = async (resumeText: string, targetRole: st
       ? resumeText.substring(0, maxLength) + '...[truncated]'
       : resumeText;
     
-    const prompt = `You are an ATS (Applicant Tracking System) expert, HR recruiter, and AI resume analyst.
+    const prompt = `You are an ATS (Applicant Tracking System) expert and strict HR recruiter evaluating resumes for "${targetRole}" position.
 
-Analyze the following resume and produce a complete ATS-friendly evaluation.
+CRITICAL: You MUST evaluate this resume SPECIFICALLY for the "${targetRole}" role. The ats_match_score and match_percentage MUST reflect how well this candidate fits THIS SPECIFIC ROLE, not just their general qualifications.
+
+Scoring Guidelines for "${targetRole}":
+- 80-100: Excellent match - candidate has most required skills, relevant experience, and appropriate education for ${targetRole}
+- 60-79: Good match - candidate has some relevant skills but may lack key requirements for ${targetRole}
+- 40-59: Fair match - candidate has transferable skills but significant gaps for ${targetRole}
+- 20-39: Poor match - candidate lacks most requirements for ${targetRole}
+- 0-19: Not a match - resume shows no relevant background for ${targetRole}
+
+BE STRICT: If the candidate's background (education, skills, experience) does NOT align with "${targetRole}" requirements, the score MUST be LOW even if they have good credentials in other fields.
+
+Examples of strict scoring:
+- A marketing graduate with no technical skills applying for Software Engineer → Score: 15-25%
+- A chef with no design experience applying for UX Designer → Score: 10-20%
+- A lawyer with no coding background applying for Game Developer → Score: 5-15%
 
 Your output MUST follow this JSON structure:
 
 {
   "candidate_summary": "short 3–4 line summary of the candidate",
-  "detected_role": "best-fit job role based on resume",
+  "detected_role": "best-fit job role based on resume (may differ from target role)",
   "skills_extracted": {
       "technical_skills": [list],
       "soft_skills": [list],
@@ -420,20 +434,20 @@ Your output MUST follow this JSON structure:
   },
   "experience": {
       "total_years": number,
-      "relevant_experience_years": number,
+      "relevant_experience_years": number (ONLY count experience relevant to ${targetRole}),
       "project_summary": [list of short project descriptions]
   },
   "education": [list of degrees and institutions],
   "achievements": [list],
-  "ats_match_score": number (0-100),
-  "missing_skills_for_target_role": [list of missing or weak skills],
-  "red_flags": [list of concerns or missing information],
-  "improvements": [list of recommendations to improve resume],
+  "ats_match_score": number (0-100, MUST reflect fit for ${targetRole} specifically),
+  "missing_skills_for_target_role": [list of skills required for ${targetRole} that candidate lacks],
+  "red_flags": [list of concerns - include if candidate's background doesn't match ${targetRole}],
+  "improvements": [list of recommendations to improve resume for ${targetRole}],
   "role_specific_analysis": {
       "target_role": "${targetRole}",
-      "match_percentage": number (0-100),
-      "matched_skills": [list],
-      "unmatched_skills": [list]
+      "match_percentage": number (0-100, same strict criteria as ats_match_score),
+      "matched_skills": [list of skills relevant to ${targetRole}],
+      "unmatched_skills": [list of required ${targetRole} skills candidate lacks]
   }
 }
 
@@ -441,10 +455,11 @@ Here is the resume text:
 "${truncatedText}"
 
 Important rules:
-- If data is missing, leave it empty instead of guessing.
-- Extract skills accurately, grouping them into categories.
-- Evaluate fairly and avoid overly generous scoring.
-- Ensure all arrays exist even if empty.
+- BE REALISTIC AND STRICT - do not inflate scores
+- If the candidate's background doesn't match ${targetRole}, score MUST be below 40%
+- Extract skills accurately but only count RELEVANT skills for role matching
+- ats_match_score and match_percentage should be very close (within 5 points)
+- Ensure all arrays exist even if empty
 - Return ONLY valid JSON, no extra text.`;
 
     console.log('📤 Sending resume to Gemini for analysis (Target role:', targetRole, ')');

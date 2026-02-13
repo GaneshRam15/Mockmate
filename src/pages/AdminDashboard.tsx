@@ -53,10 +53,11 @@ import {
   ToggleLeft,
   ToggleRight
 } from "lucide-react";
-import { getAllRolesWithStatus, toggleRoleStatus, isRoleOpen } from "@/utils/roleManagement";
+import { subscribeToRoleChanges, toggleRoleStatusInDB } from "@/utils/roleManagement";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { codingQuestions } from "@/data/codingQuestions";
 import { getAIProvider, toggleAIProvider, getProviderConfig, type AIProvider } from "@/utils/aiProviderService";
+import { jobRoles } from "@/utils/interviewUtils";
 
 const AdminDashboard = () => {
   const { user, isAdmin } = useAuth();
@@ -68,7 +69,7 @@ const AdminDashboard = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterRole, setFilterRole] = useState("");
   const [processingEmail, setProcessingEmail] = useState<string | null>(null);
-  const [rolesWithStatus, setRolesWithStatus] = useState(getAllRolesWithStatus());
+  const [rolesWithStatus, setRolesWithStatus] = useState<Array<import("@/types").JobRole & { isOpen: boolean }>>(jobRoles.map(r => ({ ...r, isOpen: true })));
   const [totalResumes, setTotalResumes] = useState(0);
   
   // Round 1 Aptitude Results
@@ -100,6 +101,14 @@ const AdminDashboard = () => {
       navigate("/login");
     }
   }, [isAdmin, navigate]);
+
+  // Real-time subscription to role changes from Firestore
+  useEffect(() => {
+    const unsubscribe = subscribeToRoleChanges((roles) => {
+      setRolesWithStatus(roles);
+    });
+    return () => unsubscribe();
+  }, []);
   
   useEffect(() => {
     const loadInterviews = async () => {
@@ -288,14 +297,22 @@ const AdminDashboard = () => {
     });
   };
   
-  const handleToggleRole = (roleId: string) => {
+  const handleToggleRole = async (roleId: string) => {
+    const currentRole = rolesWithStatus.find(r => r.id === roleId);
+    const isCurrentlyOpen = currentRole?.isOpen ?? true;
     const confirmed = window.confirm(
-      `Are you sure you want to ${isRoleOpen(roleId) ? 'close' : 'open'} this job role for interviews?`
+      `Are you sure you want to ${isCurrentlyOpen ? 'close' : 'open'} this job role for interviews?`
     );
     
     if (confirmed) {
-      toggleRoleStatus(roleId);
-      setRolesWithStatus(getAllRolesWithStatus());
+      try {
+        await toggleRoleStatusInDB(roleId, isCurrentlyOpen);
+        // No need to manually update state — the real-time listener will do it
+        toast.success(`Role ${isCurrentlyOpen ? 'closed' : 'opened'} successfully`);
+      } catch (error) {
+        console.error('Failed to toggle role:', error);
+        toast.error('Failed to update role status. Please try again.');
+      }
     }
   };
   
